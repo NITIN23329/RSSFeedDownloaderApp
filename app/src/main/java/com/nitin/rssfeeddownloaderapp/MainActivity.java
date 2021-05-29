@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 for(;;){
                     String str = bufferedReader.readLine();
                     if(str==null)break; //readline until lines are left, if no more line left, str will be null
-                    xmlResult.append(str);
+                    xmlResult.append(str).append('\n');
                 }
                 bufferedReader.close();
                 return xmlResult.toString();
@@ -73,8 +73,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "downloadXML: Invalid URL: "+e.getMessage() );
             }catch (IOException e){
                 Log.e(TAG, "downloadXML: Got IOException: "+e.getMessage());
+            }catch (SecurityException e){
+                Log.e(TAG, "downloadXML: can not establish connection with url due to : "+e.getMessage());
             }
-            return null;
+            return null;    // if we can not read the content in URL successfully, return null
 
         }
     }

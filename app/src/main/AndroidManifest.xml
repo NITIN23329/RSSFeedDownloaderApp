@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nitin.rssfeeddownloaderapp">
 
+    <!--    This is done to grant access to restricted resources in our app-->
+    <!--    Here we are allowing our app to use internet-->
+    <uses-permission android:name ="android.permission.INTERNET"/>
+
+
     <application
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
