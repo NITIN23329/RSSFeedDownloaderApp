@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -35,9 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
         private static final String TAG = "DownloadDataTask";
         @Override   // after completion of doInBackground(), it will be called by passing the return value of doInBackground()
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            Log.d(TAG, "onPostExecute: parameter is: " + s);
+        protected void onPostExecute(String xmlData) {
+            super.onPostExecute(xmlData);
+//            Log.d(TAG, "onPostExecute: parameter is: " + s);
+            ParseApps parser = ParseApps.getInstance();
+            if(!parser.parse(xmlData)) Log.e(TAG, "onPostExecute: can not parse rss feed successfully");
+            else {
+                for(FeedEntry appInfo: parser.getAppInfoList()) System.out.println(appInfo);
+            }
         }
 
         @Override   // this runs in other thread asynchronously
