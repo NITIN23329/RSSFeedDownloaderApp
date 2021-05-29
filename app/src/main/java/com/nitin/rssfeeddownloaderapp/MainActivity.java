@@ -19,7 +19,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ListView xmlListView;
-    
+    private final String APPLE_TOP_10_FREE_APPS_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml";
+    private final String APPLE_TOP_25_FREE_APPS_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=25/xml";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: Starting Async Task");
         DownloadDataTask task = new DownloadDataTask();
-        task.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml");
+        task.execute(APPLE_TOP_10_FREE_APPS_URL);
         xmlListView = findViewById(R.id.xmlListView);
 
 

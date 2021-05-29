@@ -8,22 +8,6 @@ public class FeedEntry {
     private String appURL;
     private String releaseDate;
 
-    public String getName() {
-        return name;
-    }
-    public String getArtist() {
-        return artist;
-    }
-    public String getSummery() {
-        return summery;
-    }
-    public String getAppURL() {
-        return appURL;
-    }
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
 
     public void setName(String name) {
         this.name = name;
