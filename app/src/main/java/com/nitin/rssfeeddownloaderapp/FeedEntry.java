@@ -44,11 +44,9 @@ public class FeedEntry {
 
     @Override
     public String toString() {
-        return "FeedEntry{" + '\n'+
-                "\t\tname='" + name + '\n' +
-                "\t\tartist='" + artist + '\n' +
-                "\t\tappURL='" + appURL + '\n' +
-                "\t\treleaseDate='" + releaseDate + '\n' +
-                '}';
+        return "name = " + name + '\n' +
+                "artist = " + artist + '\n' +
+                "appURL = " + appURL + '\n' +
+                "releaseDate = " + releaseDate ;
     }
 }

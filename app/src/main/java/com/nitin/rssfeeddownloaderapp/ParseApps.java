@@ -5,14 +5,13 @@ import android.util.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 
 public class ParseApps {
     private static final String TAG = "ParseApps";
     private ArrayList<FeedEntry> appInfoList;
-    private static ParseApps onlyInstance = new ParseApps();
+    private static final ParseApps onlyInstance = new ParseApps();
     private ParseApps(){
         appInfoList = new ArrayList<>();
     }
@@ -88,6 +87,7 @@ public class ParseApps {
             e.printStackTrace();
             isAllGood = false;
         }
+
         return isAllGood;
     }
 }

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,15 +18,19 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private ListView xmlListView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: Starting Async Task");
         DownloadDataTask task = new DownloadDataTask();
         task.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml");
-        Log.d(TAG, "onCreate: ending onCreate");
+        xmlListView = findViewById(R.id.xmlListView);
+
+
     }
     private  class DownloadDataTask extends AsyncTask<String,Void,String>{
         // An asynchronous task is defined by a computation that runs on a background thread and whose result is published on the UI thread.
@@ -38,12 +44,16 @@ public class MainActivity extends AppCompatActivity {
         @Override   // after completion of doInBackground(), it will be called by passing the return value of doInBackground()
         protected void onPostExecute(String xmlData) {
             super.onPostExecute(xmlData);
-//            Log.d(TAG, "onPostExecute: parameter is: " + s);
-            ParseApps parser = ParseApps.getInstance();
-            if(!parser.parse(xmlData)) Log.e(TAG, "onPostExecute: can not parse rss feed successfully");
-            else {
-                for(FeedEntry appInfo: parser.getAppInfoList()) System.out.println(appInfo);
-            }
+            Log.d(TAG, "onPostExecute: result is: " + xmlData);
+            ParseApps parseApps = ParseApps.getInstance();
+            parseApps.parse(xmlData);
+            // arrayAdapter as a bridge btw UI and data source
+            // it takes the context: MainActivity.this
+            // the resource ID: R.layout.list_item, which is the View which will be used by the adapter to display contents
+            // the list of Objects which is our data source.
+            ArrayAdapter<FeedEntry> arrayAdapter = new ArrayAdapter<>(MainActivity.this,R.layout.list_item,parseApps.getAppInfoList());
+            // linking ihe arrayAdapter with the view which will use this adapter
+            xmlListView.setAdapter(arrayAdapter);
         }
 
         @Override   // this runs in other thread asynchronously
@@ -51,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
             // str is treated as an array
             Log.d(TAG, "doInBackground: starts with: "+str[0]);
             // we will only do the task for 1st element in str only
-            String rssFeed = downloadXML(str[0]);
-            if(rssFeed==null) Log.e(TAG, "doInBackground: can't download the rssFeed");
-            return rssFeed;
+            String xmlData = downloadXML(str[0]);
+            if(xmlData==null) Log.e(TAG, "doInBackground: can't download the xml Data");
+            return xmlData;
         }
 
         private String downloadXML(String urlPath){
