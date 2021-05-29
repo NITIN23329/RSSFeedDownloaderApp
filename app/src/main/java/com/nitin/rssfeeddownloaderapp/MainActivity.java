@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: Starting Async Task");
         DownloadDataTask task = new DownloadDataTask();
-        task.onPostExecute("a valid url");
+        task.execute("a valid url");
         Log.d(TAG, "onCreate: ending onCreate");
     }
     private  class DownloadDataTask extends AsyncTask<String,Void,String>{
@@ -62,17 +62,22 @@ public class MainActivity extends AppCompatActivity {
                 int responseCode = connection.getResponseCode();
                 Log.d(TAG, "downloadXML: the response code: "+ responseCode);
 
-                InputStream inputStream = connection.getInputStream();
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);  // buffered reader is used as it is fast.
-
+                // buffered reader is used as it is fast.
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                for(;;){
+                    String str = bufferedReader.readLine();
+                    if(str==null)break; //readline until lines are left, if no more line left, str will be null
+                    xmlResult.append(str);
+                }
                 bufferedReader.close();
+                return xmlResult.toString();
 
             }catch (MalformedURLException e){
                 Log.e(TAG, "downloadXML: Invalid URL: "+e.getMessage() );
             }catch (IOException e){
                 Log.e(TAG, "downloadXML: Got IOException: "+e.getMessage());
             }
+            return null;
 
         }
     }
