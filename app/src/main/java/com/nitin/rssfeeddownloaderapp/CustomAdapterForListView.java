@@ -59,17 +59,20 @@ public class CustomAdapterForListView extends ArrayAdapter<FeedEntry> {
         final TextView tvName;
         final TextView tvArtist;
         final TextView tvSummary;
+        final TextView tvReleaseDate;
 
         public ViewHolder(View view) {
             // find the 3 widgets in our customAdapter
             this.tvName = view.findViewById(R.id.tvName);
             this.tvArtist = view.findViewById(R.id.tvArtist);
             this.tvSummary = view.findViewById(R.id.tvSummary);
+            this.tvReleaseDate  = view.findViewById(R.id.tvReleseDate);
         }
         public void updateView(FeedEntry currentFeed ){
             this.tvArtist.setText(currentFeed.getArtist());
             this.tvSummary.setText(currentFeed.getSummery());
             this.tvName.setText(currentFeed.getName());
+            this.tvReleaseDate.setText("Release date: "+currentFeed.getReleaseDate());
         }
     }
 

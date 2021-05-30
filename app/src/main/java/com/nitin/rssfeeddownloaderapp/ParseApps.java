@@ -11,12 +11,8 @@ import java.util.ArrayList;
 public class ParseApps {
     private static final String TAG = "ParseApps";
     private ArrayList<FeedEntry> appInfoList;
-    private static final ParseApps onlyInstance = new ParseApps();
-    private ParseApps(){
+    public ParseApps(){
         appInfoList = new ArrayList<>();
-    }
-    public static ParseApps getInstance(){
-        return onlyInstance;
     }
 
     public ArrayList<FeedEntry> getAppInfoList() {

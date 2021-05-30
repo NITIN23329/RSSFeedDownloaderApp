@@ -1,16 +1,15 @@
 package com.nitin.rssfeeddownloaderapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,47 +17,54 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ListView xmlListView;
-    private final String APPLE_TOP_10_FREE_APPS_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml";
-    private final String APPLE_TOP_25_FREE_APPS_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=25/xml";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate: Starting Async Task");
-        DownloadDataTask task = new DownloadDataTask();
-        task.execute(APPLE_TOP_10_FREE_APPS_URL);
         xmlListView = findViewById(R.id.xmlListView);
-
+        Log.d(TAG, "onCreate: Starting Async Task");
 
     }
 
-    @Override
-    public void supportInvalidateOptionsMenu() {
-        super.supportInvalidateOptionsMenu();
-    }
 
     @Override //To specify the options menu for an activity, override onCreateOptionsMenu()
     public boolean onCreateOptionsMenu(Menu menu) {
         //To use the menu in your activity, you need to inflate the menu resource (convert the XML resource into a programmable object) using MenuInflater.inflate().
         // AppCompactActivity is a context itself, we can get the context and add our R.menu.feeds_menu to it.
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.feeds_menu,menu);
+        menuInflater.inflate(R.menu.feeds_menu, menu);
         return true;    // successfully inflated our menu
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        String url;
+        int idOfSelectedMenu = item.getItemId();
+        switch (idOfSelectedMenu) {
+            case R.id.menuFree:
+                url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml";
+                break;
+            case R.id.menuPaid:
+                url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml";
+                break;
+            case R.id.menuSong:
+                url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml";
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        DownloadDataTask task = new DownloadDataTask();
+        task.execute(url);
+        return true;
     }
 
-    private  class DownloadDataTask extends AsyncTask<String,Void,String>{
+    private class DownloadDataTask extends AsyncTask<String, Void, String> {
         // An asynchronous task is defined by a computation that runs on a background thread and whose result is published on the UI thread.
         // This helps us to run our task in background(like downloading) in parallel with the app so that for heavy tasks, app don't get freeze.
         // Class AsyncTask<Params,Progress,Result> is a abstract class having 3 parameters.
@@ -67,11 +73,13 @@ public class MainActivity extends AppCompatActivity {
         // 3rd parameter: The data type of our result, in our case it would be xml
 
         private static final String TAG = "DownloadDataTask";
-        @Override   // after completion of doInBackground(), it will be called by passing the return value of doInBackground()
+
+        @Override
+        // after completion of doInBackground(), it will be called by passing the return value of doInBackground()
         protected void onPostExecute(String xmlData) {
-            super.onPostExecute(xmlData);
+
             Log.d(TAG, "onPostExecute: result is: " + xmlData);
-            ParseApps parseApps = ParseApps.getInstance();
+            ParseApps parseApps = new ParseApps();
             parseApps.parse(xmlData);
 //            // arrayAdapter as a bridge btw UI and data source
 //            // it takes the context: MainActivity.this
@@ -82,45 +90,46 @@ public class MainActivity extends AppCompatActivity {
 //            xmlListView.setAdapter(arrayAdapter);
 
             // We will now be using our CustomAdapter to display name,artist and summary of apps.
-             CustomAdapterForListView customAdapter = new CustomAdapterForListView(MainActivity.this,R.layout.item_info,parseApps.getAppInfoList());
-             xmlListView.setAdapter(customAdapter);
+            CustomAdapterForListView customAdapter = new CustomAdapterForListView(MainActivity.this, R.layout.item_info, parseApps.getAppInfoList());
+            xmlListView.setAdapter(customAdapter);
         }
 
         @Override   // this runs in other thread asynchronously
-        protected String doInBackground(String ... str) {
+        protected String doInBackground(String... str) {
             // str is treated as an array
-            Log.d(TAG, "doInBackground: starts with: "+str[0]);
+            Log.d(TAG, "doInBackground: starts with: " + str[0]);
             // we will only do the task for 1st element in str only
             String xmlData = downloadXML(str[0]);
-            if(xmlData==null) Log.e(TAG, "doInBackground: can't download the xml Data");
+            if (xmlData == null) Log.e(TAG, "doInBackground: can't download the xml Data");
             return xmlData;
         }
 
-        private String downloadXML(String urlPath){
+        private String downloadXML(String urlPath) {
             StringBuilder xmlResult = new StringBuilder();
-            try{
+            try {
                 URL url = new URL(urlPath);
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection(); // opening connection with urlPath
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection(); // opening connection with urlPath
                 //when we connect with a http, server gives us response code like 404(Can not found)
                 int responseCode = connection.getResponseCode();
-                Log.d(TAG, "downloadXML: the response code: "+ responseCode);
+                Log.d(TAG, "downloadXML: the response code: " + responseCode);
 
                 // buffered reader is used as it is fast.
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                for(;;){
+                for (; ; ) {
                     String str = bufferedReader.readLine();
-                    if(str==null)break; //readline until lines are left, if no more line left, str will be null
+                    if (str == null)
+                        break; //readline until lines are left, if no more line left, str will be null
                     xmlResult.append(str).append('\n');
                 }
                 bufferedReader.close();
                 return xmlResult.toString();
 
-            }catch (MalformedURLException e){
-                Log.e(TAG, "downloadXML: Invalid URL: "+e.getMessage() );
-            }catch (IOException e){
-                Log.e(TAG, "downloadXML: Got IOException: "+e.getMessage());
-            }catch (SecurityException e){
-                Log.e(TAG, "downloadXML: can not establish connection with url due to : "+e.getMessage());
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "downloadXML: Invalid URL: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "downloadXML: Got IOException: " + e.getMessage());
+            } catch (SecurityException e) {
+                Log.e(TAG, "downloadXML: can not establish connection with url due to : " + e.getMessage());
             }
             return null;    // if we can not read the content in URL successfully, return null
 
