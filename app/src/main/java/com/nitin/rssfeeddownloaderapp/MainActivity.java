@@ -17,11 +17,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.acl.Group;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ListView xmlListView;
+    private  final String KEY_FOR_OPTION_SELECTED = "KEY_FOR_OPTION_SELECTED";
+    private String optionSelected;
+    private  final String KEY_FOR_LIMIT_SELECTED = "KEY_FOR_LIMIT_SELECTED";
+    private int limitSelected = 10; //default value is 10
+    private String previousURL = null;
+    private final String KEY_FOR_PREVIOUS_URL = "KEY_FOR_PREVIOUS_URL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +37,25 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Starting Async Task");
 
     }
+    // added save functionality for optionSelected and limitSelected and previous processed url
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        optionSelected = savedInstanceState.getString(KEY_FOR_OPTION_SELECTED);
+        limitSelected  = savedInstanceState.getInt(KEY_FOR_LIMIT_SELECTED);
+        previousURL = savedInstanceState.getString(KEY_FOR_PREVIOUS_URL);
+        startDownload(previousURL); // we re-download cuz textViews lost their contents when when orientation changes
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(KEY_FOR_OPTION_SELECTED,optionSelected);
+        outState.putInt(KEY_FOR_LIMIT_SELECTED,limitSelected);
+        outState.putString(KEY_FOR_PREVIOUS_URL,previousURL);
+        super.onSaveInstanceState(outState);
+
+    }
 
     @Override //To specify the options menu for an activity, override onCreateOptionsMenu()
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,15 +63,18 @@ public class MainActivity extends AppCompatActivity {
         // AppCompactActivity is a context itself, we can get the context and add our R.menu.feeds_menu to it.
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.feeds_menu, menu);
+        // we write this setChecked() only when we rotate our phone, the app gets relaunched(this means our inCreateMenuOption get re-aainvoked) and default of 10 is selected.
+        // now as we are saving limitSelected and downloading FeedEntry again, we should update our checked item as well
+        if(limitSelected==10)menu.findItem(R.id.top10).setChecked(true);
+        else if(limitSelected==25)menu.findItem(R.id.top25).setChecked(true);
         return true;    // successfully inflated our menu
     }
 
-    private String optionSelected;
-    private int limitSelected = 10; //default value is 10
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         String url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/limit=%d/xml";
         int idOfSelectedMenu = item.getItemId();
+        boolean reloadSelected = false;
         switch (idOfSelectedMenu) {
             case R.id.menuFree:
                 optionSelected = "topfreeapplications";
@@ -68,16 +94,25 @@ public class MainActivity extends AppCompatActivity {
                 limitSelected = 25;
                 if(!item.isChecked())item.setChecked(true);
                 break;
+            case R.id.reload:
+                reloadSelected = true;
+                break;
             default:    // when a sub-menu is selected
                 return super.onOptionsItemSelected(item);
         }
 
-//        if(top10.isChecked())limitSelected = 10;
-//        else if(top25.isChecked())limitSelected = 25;
-        DownloadDataTask task = new DownloadDataTask();
-        System.out.println(String.format(url,optionSelected,limitSelected));
-        task.execute(String.format(url,optionSelected,limitSelected));
+        String currURL = String.format(url,optionSelected,limitSelected);
+        // we will download only if our previous processed url does not match with current given url or a reload menu is pressed.
+        // if reload is pressed, last processed url is executed as reload menu is pressed, optionSelected and limitSelected hasn't changed hence currURL hasn't changed
+        if(reloadSelected || !currURL.equals(previousURL)){
+           startDownload(currURL);
+        }
         return true;
+    }
+    private void startDownload(String currURL){
+        DownloadDataTask task = new DownloadDataTask();
+        task.execute(currURL);
+        previousURL = currURL;
     }
 
     private class DownloadDataTask extends AsyncTask<String, Void, String> {

@@ -1,10 +1,12 @@
 package com.nitin.rssfeeddownloaderapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,7 +15,7 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 public class CustomAdapterForListView extends ArrayAdapter<FeedEntry> {
-    private static final String TAG = "CustomAdapterForListView";
+    public static final String TAG = "CustomAdapterForListView";
     private final int resourceID;       // This is same as R.id for the item_info.xml as we will be needing it here.
     private final LayoutInflater layoutInflater;
     private List<FeedEntry> appInfoList;
@@ -53,6 +55,7 @@ public class CustomAdapterForListView extends ArrayAdapter<FeedEntry> {
         // update our 3 widgets in our view
         viewHolder.updateView(appInfoList.get(position));
         // return the updated view
+        Log.d(TAG, "getView: custom adapter get called for view"+view.getTag());
         return view;
     }
     private class ViewHolder{
@@ -66,7 +69,7 @@ public class CustomAdapterForListView extends ArrayAdapter<FeedEntry> {
             this.tvName = view.findViewById(R.id.tvName);
             this.tvArtist = view.findViewById(R.id.tvArtist);
             this.tvSummary = view.findViewById(R.id.tvSummary);
-            this.tvReleaseDate  = view.findViewById(R.id.tvReleseDate);
+            this.tvReleaseDate  = view.findViewById(R.id.tvReleaseDate);
         }
         public void updateView(FeedEntry currentFeed ){
             this.tvArtist.setText(currentFeed.getArtist());

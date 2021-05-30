@@ -23,4 +23,7 @@
             android:id="@+id/top25"
             android:title="Top 25 Items" />
     </group>
+    <item
+        android:id="@+id/reload"
+        android:title="Reload " />
 </menu>
