@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.acl.Group;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -42,25 +43,40 @@ public class MainActivity extends AppCompatActivity {
         return true;    // successfully inflated our menu
     }
 
+    private String optionSelected;
+    private int limitSelected = 10; //default value is 10
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        String url;
+        String url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/limit=%d/xml";
         int idOfSelectedMenu = item.getItemId();
         switch (idOfSelectedMenu) {
             case R.id.menuFree:
-                url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml";
+                optionSelected = "topfreeapplications";
                 break;
             case R.id.menuPaid:
-                url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml";
+                optionSelected ="toppaidapplications";
                 break;
             case R.id.menuSong:
-                url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml";
+                optionSelected = "topsongs";
                 break;
-            default:
+            case R.id.top10:
+                limitSelected = 10;
+                // setting the checked property if we selected this item
+                if(!item.isChecked())item.setChecked(true);
+                break;
+            case R.id.top25:
+                limitSelected = 25;
+                if(!item.isChecked())item.setChecked(true);
+                break;
+            default:    // when a sub-menu is selected
                 return super.onOptionsItemSelected(item);
         }
+
+//        if(top10.isChecked())limitSelected = 10;
+//        else if(top25.isChecked())limitSelected = 25;
         DownloadDataTask task = new DownloadDataTask();
-        task.execute(url);
+        System.out.println(String.format(url,optionSelected,limitSelected));
+        task.execute(String.format(url,optionSelected,limitSelected));
         return true;
     }
 

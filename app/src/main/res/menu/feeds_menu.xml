@@ -9,13 +9,15 @@
     <item
         android:id="@+id/menuSong"
         android:title="Songs" />
+    <!-- group consists of 2 menu-item which has checkable property set to single-->
     <group
         android:id="@+id/groupLimit"
         android:checkableBehavior="single"
         android:enabled="true">
+        <!-- by default top 10 menu is selected-->
         <item
             android:id="@+id/top10"
-            android:enabled="true"
+            android:checked="true"
             android:title="Top 10 Items" />
         <item
             android:id="@+id/top25"
