@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuFree"
+        android:title="Free Apps" />
+    <item
+        android:id="@+id/menuPaid"
+        android:title="Paid Apps" />
+    <item
+        android:id="@+id/menuSong"
+        android:title="Songs" />
+</menu>

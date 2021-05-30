@@ -1,10 +1,14 @@
 package com.nitin.rssfeeddownloaderapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -19,7 +23,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ListView xmlListView;
-    private final String APPLE_TOP_10_FREE_APPS_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=200/xml";
+    private final String APPLE_TOP_10_FREE_APPS_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml";
     private final String APPLE_TOP_25_FREE_APPS_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=25/xml";
 
     @Override
@@ -34,6 +38,26 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void supportInvalidateOptionsMenu() {
+        super.supportInvalidateOptionsMenu();
+    }
+
+    @Override //To specify the options menu for an activity, override onCreateOptionsMenu()
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //To use the menu in your activity, you need to inflate the menu resource (convert the XML resource into a programmable object) using MenuInflater.inflate().
+        // AppCompactActivity is a context itself, we can get the context and add our R.menu.feeds_menu to it.
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.feeds_menu,menu);
+        return true;    // successfully inflated our menu
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
     private  class DownloadDataTask extends AsyncTask<String,Void,String>{
         // An asynchronous task is defined by a computation that runs on a background thread and whose result is published on the UI thread.
         // This helps us to run our task in background(like downloading) in parallel with the app so that for heavy tasks, app don't get freeze.
