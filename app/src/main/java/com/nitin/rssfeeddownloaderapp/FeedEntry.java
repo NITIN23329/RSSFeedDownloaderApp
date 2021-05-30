@@ -25,6 +25,25 @@ public class FeedEntry {
         this.releaseDate = releaseDate;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public String getSummery() {
+        return summery;
+    }
+
+    public String getAppURL() {
+        return appURL;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
 
     @Override
     public String toString() {

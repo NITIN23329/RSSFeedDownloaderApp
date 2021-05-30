@@ -49,13 +49,17 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onPostExecute: result is: " + xmlData);
             ParseApps parseApps = ParseApps.getInstance();
             parseApps.parse(xmlData);
-            // arrayAdapter as a bridge btw UI and data source
-            // it takes the context: MainActivity.this
-            // the resource ID: R.layout.list_item, which is the View which will be used by the adapter to display contents
-            // the list of Objects which is our data source.
-            ArrayAdapter<FeedEntry> arrayAdapter = new ArrayAdapter<>(MainActivity.this,R.layout.list_item,parseApps.getAppInfoList());
-            // linking ihe arrayAdapter with the view which will use this adapter
-            xmlListView.setAdapter(arrayAdapter);
+//            // arrayAdapter as a bridge btw UI and data source
+//            // it takes the context: MainActivity.this
+//            // the resource ID: R.layout.list_item, which is the View which will be used by the adapter to display contents
+//            // the list of Objects which is our data source.
+//            ArrayAdapter<FeedEntry> arrayAdapter = new ArrayAdapter<>(MainActivity.this,R.layout.list_item,parseApps.getAppInfoList());
+//            // linking ihe arrayAdapter with the view which will use this adapter
+//            xmlListView.setAdapter(arrayAdapter);
+
+            // We will now be using our CustomAdapter to display name,artist and summary of apps.
+             CustomAdapterForListView customAdapter = new CustomAdapterForListView(MainActivity.this,R.layout.item_info,parseApps.getAppInfoList());
+             xmlListView.setAdapter(customAdapter);
         }
 
         @Override   // this runs in other thread asynchronously
