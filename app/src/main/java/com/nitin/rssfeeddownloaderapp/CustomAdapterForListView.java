@@ -39,17 +39,38 @@ public class CustomAdapterForListView extends ArrayAdapter<FeedEntry> {
         // the LayoutInflater takes the layout specified to it and convert it to a single View object
         // inflate takes the xml_id(the id of item_info.xml) the id of custom adapter
         // then it takes parent(the item_info.xml) from which it will take  the layout of our custom adapter
-        View view = layoutInflater.inflate(resourceID,parent,false);
-        // find the 3 widgets in our customAdapter
-        TextView tvName = view.findViewById(R.id.tvName);
-        TextView tvArtist = view.findViewById(R.id.tvArtist);
-        TextView tvSummary = view.findViewById(R.id.tvSummary);
+        //convertView is a view which is given to customAdapter which can be reused if it is not null
+        ViewHolder viewHolder;
+        View view;
+        if(convertView==null){
+            view  = layoutInflater.inflate(resourceID,parent,false);    // inflate a new  view of custom layout
+            viewHolder = new ViewHolder(view);  // make a new ViewHolder tag for our newly created view
+            view.setTag(viewHolder);    // set tag for our view
+        }else {
+            view = convertView; //reuse view
+            viewHolder = (ViewHolder) view.getTag();
+        }
         // update our 3 widgets in our view
-        FeedEntry currentFeed = appInfoList.get(position);
-        tvArtist.setText(currentFeed.getArtist());
-        tvSummary.setText(currentFeed.getSummery());
-        tvName.setText(currentFeed.getName());
+        viewHolder.updateView(appInfoList.get(position));
         // return the updated view
         return view;
     }
+    private class ViewHolder{
+        final TextView tvName;
+        final TextView tvArtist;
+        final TextView tvSummary;
+
+        public ViewHolder(View view) {
+            // find the 3 widgets in our customAdapter
+            this.tvName = view.findViewById(R.id.tvName);
+            this.tvArtist = view.findViewById(R.id.tvArtist);
+            this.tvSummary = view.findViewById(R.id.tvSummary);
+        }
+        public void updateView(FeedEntry currentFeed ){
+            this.tvArtist.setText(currentFeed.getArtist());
+            this.tvSummary.setText(currentFeed.getSummery());
+            this.tvName.setText(currentFeed.getName());
+        }
+    }
+
 }
