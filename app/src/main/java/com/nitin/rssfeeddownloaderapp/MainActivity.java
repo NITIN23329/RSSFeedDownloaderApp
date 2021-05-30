@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 //            xmlListView.setAdapter(arrayAdapter);
 
             // We will now be using our CustomAdapter to display name,artist and summary of apps.
-            CustomAdapterForListView customAdapter = new CustomAdapterForListView(MainActivity.this, R.layout.item_info, parseApps.getAppInfoList());
+            CustomAdapterForListView<FeedEntry> customAdapter = new CustomAdapterForListView<> (MainActivity.this, R.layout.item_info, parseApps.getAppInfoList());
             xmlListView.setAdapter(customAdapter);
         }
 

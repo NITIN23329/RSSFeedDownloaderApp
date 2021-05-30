@@ -14,13 +14,13 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-public class CustomAdapterForListView extends ArrayAdapter<FeedEntry> {
+public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<FeedEntry> {
     public static final String TAG = "CustomAdapterForListView";
     private final int resourceID;       // This is same as R.id for the item_info.xml as we will be needing it here.
     private final LayoutInflater layoutInflater;
-    private List<FeedEntry> appInfoList;
+    private List<T> appInfoList;
 
-    public CustomAdapterForListView(Context context, int resource, List<FeedEntry> appInfoList) {
+    public CustomAdapterForListView(Context context, int resource, List<T> appInfoList) {
         super(context, resource);
         resourceID = resource;
         // we can get LayoutInflater from a Context.
