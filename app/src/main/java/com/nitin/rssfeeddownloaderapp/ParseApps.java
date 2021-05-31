@@ -47,7 +47,7 @@ public class ParseApps {
                 String currTagName = xmlPullParser.getName();
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
-                        Log.d(TAG, "parse: Starting tag of: " + currTagName);
+//                        Log.d(TAG, "parse: Starting tag of: " + currTagName);
                         if (currTagName.equalsIgnoreCase("entry")) {
                             // if our currTagName is <entry> then we are going to see another new entry and we will create another new FeedEntry object.
                             insideEntry = true;
@@ -60,7 +60,7 @@ public class ParseApps {
                     case XmlPullParser.END_TAG: // if our eventType is end_tag, then store our currTagValue appropriately
                         if (currTagName == null)
                             break; // currTagName can be null, in that case we don't check it
-                        Log.d(TAG, "parse: ending tag of: " + currTagName);
+//                        Log.d(TAG, "parse: ending tag of: " + currTagName);
                         if (currTagName.equalsIgnoreCase("entry")) {
                             appInfoList.add(currEntry);// if we reached at the end of <entry> then we successfully create a FeedEntry object hence add it to our appInfoList
                             insideEntry = false;

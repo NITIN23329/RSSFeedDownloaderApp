@@ -58,7 +58,7 @@ public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<
         // update our 3 widgets in our view
         viewHolder.updateView(appInfoList.get(position));
         // return the updated view
-        Log.d(TAG, "getView: custom adapter get called for view" + view.getTag());
+//        Log.d(TAG, "getView: custom adapter get called for view" + view.getTag());
         return view;
     }
 

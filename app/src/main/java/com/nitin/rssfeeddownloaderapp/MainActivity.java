@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,11 +25,15 @@ public class MainActivity extends AppCompatActivity {
     private final String KEY_FOR_OPTION_SELECTED = "KEY_FOR_OPTION_SELECTED";
     private final String KEY_FOR_LIMIT_SELECTED = "KEY_FOR_LIMIT_SELECTED";
     private final String KEY_FOR_PREVIOUS_URL = "KEY_FOR_PREVIOUS_URL";
+    private final String KEY_FOR_CURRENT_SELECTED = "KEY_FOR_CURRENT_SELECTED";
 
     private ListView xmlListView;
     private String optionSelected;
     private int limitSelected = 10; //default value is 10
     private String previousURL = null;
+    private String textOfCurrentSelected = "Please choose a option from Menu Bar at Top-Right";
+    private TextView currSelected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         xmlListView = findViewById(R.id.xmlListView);
+        currSelected = findViewById(R.id.currentSelected);
+        currSelected.setText(textOfCurrentSelected);
         Log.d(TAG, "onCreate: Starting Async Task");
 
     }
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         optionSelected = savedInstanceState.getString(KEY_FOR_OPTION_SELECTED);
         limitSelected = savedInstanceState.getInt(KEY_FOR_LIMIT_SELECTED);
         previousURL = savedInstanceState.getString(KEY_FOR_PREVIOUS_URL);
+        textOfCurrentSelected = savedInstanceState.getString(KEY_FOR_CURRENT_SELECTED);
         startDownload(previousURL); // we re-download cuz textViews lost their contents when when orientation changes
 
     }
@@ -56,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(KEY_FOR_OPTION_SELECTED, optionSelected);
         outState.putInt(KEY_FOR_LIMIT_SELECTED, limitSelected);
         outState.putString(KEY_FOR_PREVIOUS_URL, previousURL);
+        outState.putString(KEY_FOR_CURRENT_SELECTED,textOfCurrentSelected);
         super.onSaveInstanceState(outState);
 
     }
@@ -76,17 +85,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         String url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/limit=%d/xml";
+        String currentSelectedText = "";
         int idOfSelectedMenu = item.getItemId();
         boolean reloadSelected = false;
         switch (idOfSelectedMenu) {
             case R.id.menuFree:
                 optionSelected = "topfreeapplications";
+                textOfCurrentSelected = " Top Free Apps";
                 break;
             case R.id.menuPaid:
                 optionSelected = "toppaidapplications";
+                textOfCurrentSelected = " Top Paid Apps";
                 break;
             case R.id.menuSong:
                 optionSelected = "topsongs";
+                textOfCurrentSelected = " Top Songs";
                 break;
             case R.id.top10:
                 limitSelected = 10;
@@ -105,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String currURL = String.format(url, optionSelected, limitSelected);
+
         // we will download only if our previous processed url does not match with current given url or a reload menu is pressed.
         // if reload is pressed, last processed url is executed as reload menu is pressed, optionSelected and limitSelected hasn't changed hence currURL hasn't changed
         if (reloadSelected || !currURL.equals(previousURL)) {
@@ -116,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
     private void startDownload(String currURL) {
         DownloadDataTask task = new DownloadDataTask();
         task.execute(currURL);
+        currSelected.setText(limitSelected+textOfCurrentSelected);
         previousURL = currURL;
     }
 
@@ -133,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
         // after completion of doInBackground(), it will be called by passing the return value of doInBackground()
         protected void onPostExecute(String xmlData) {
 
-            Log.d(TAG, "onPostExecute: result is: " + xmlData);
             ParseApps parseApps = new ParseApps();
             if (!parseApps.parse(xmlData)) Log.e(TAG, "onPostExecute: parsing is unsuccessful");
 //            // arrayAdapter as a bridge btw UI and data source
@@ -152,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         @Override   // this runs in other thread asynchronously
         protected String doInBackground(String... str) {
             // str is treated as an array
-            Log.d(TAG, "doInBackground: starts with: " + str[0]);
             // we will only do the task for 1st element in str only
             String xmlData = downloadXML(str[0]);
             if (xmlData == null) Log.e(TAG, "doInBackground: can't download the xml Data");
