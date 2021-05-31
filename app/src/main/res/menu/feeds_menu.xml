@@ -10,6 +10,9 @@
         android:id="@+id/menuSong"
         android:title="Songs" />
     <!-- group consists of 2 menu-item which has checkable property set to single-->
+    <item
+        android:id="@+id/menuMovies"
+        android:title="Movies" />
     <group
         android:id="@+id/groupLimit"
         android:checkableBehavior="single"

@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(KEY_FOR_OPTION_SELECTED, optionSelected);
         outState.putInt(KEY_FOR_LIMIT_SELECTED, limitSelected);
         outState.putString(KEY_FOR_PREVIOUS_URL, previousURL);
-        outState.putString(KEY_FOR_CURRENT_SELECTED,textOfCurrentSelected);
+        outState.putString(KEY_FOR_CURRENT_SELECTED, textOfCurrentSelected);
         super.onSaveInstanceState(outState);
 
     }
@@ -85,21 +85,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         String url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/limit=%d/xml";
-        String currentSelectedText = "";
         int idOfSelectedMenu = item.getItemId();
         boolean reloadSelected = false;
         switch (idOfSelectedMenu) {
             case R.id.menuFree:
-                optionSelected = "topfreeapplications";
+                optionSelected = "topFreeApplications";
                 textOfCurrentSelected = " Top Free Apps";
                 break;
             case R.id.menuPaid:
-                optionSelected = "toppaidapplications";
+                optionSelected = "topPaidApplications";
                 textOfCurrentSelected = " Top Paid Apps";
                 break;
             case R.id.menuSong:
-                optionSelected = "topsongs";
+                optionSelected = "topSongs";
                 textOfCurrentSelected = " Top Songs";
+                break;
+            case R.id.menuMovies:
+                optionSelected = "topMovies";
+                textOfCurrentSelected = " Top Movies";
                 break;
             case R.id.top10:
                 limitSelected = 10;
@@ -130,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     private void startDownload(String currURL) {
         DownloadDataTask task = new DownloadDataTask();
         task.execute(currURL);
-        currSelected.setText(limitSelected+textOfCurrentSelected);
+        currSelected.setText(limitSelected + textOfCurrentSelected);
         previousURL = currURL;
     }
 
