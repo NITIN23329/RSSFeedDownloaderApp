@@ -20,13 +20,15 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
+    private final String KEY_FOR_OPTION_SELECTED = "KEY_FOR_OPTION_SELECTED";
+    private final String KEY_FOR_LIMIT_SELECTED = "KEY_FOR_LIMIT_SELECTED";
+    private final String KEY_FOR_PREVIOUS_URL = "KEY_FOR_PREVIOUS_URL";
+
     private ListView xmlListView;
-    private  final String KEY_FOR_OPTION_SELECTED = "KEY_FOR_OPTION_SELECTED";
     private String optionSelected;
-    private  final String KEY_FOR_LIMIT_SELECTED = "KEY_FOR_LIMIT_SELECTED";
     private int limitSelected = 10; //default value is 10
     private String previousURL = null;
-    private final String KEY_FOR_PREVIOUS_URL = "KEY_FOR_PREVIOUS_URL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +39,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Starting Async Task");
 
     }
+
     // added save functionality for optionSelected and limitSelected and previous processed url
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         optionSelected = savedInstanceState.getString(KEY_FOR_OPTION_SELECTED);
-        limitSelected  = savedInstanceState.getInt(KEY_FOR_LIMIT_SELECTED);
+        limitSelected = savedInstanceState.getInt(KEY_FOR_LIMIT_SELECTED);
         previousURL = savedInstanceState.getString(KEY_FOR_PREVIOUS_URL);
         startDownload(previousURL); // we re-download cuz textViews lost their contents when when orientation changes
 
@@ -50,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_FOR_OPTION_SELECTED,optionSelected);
-        outState.putInt(KEY_FOR_LIMIT_SELECTED,limitSelected);
-        outState.putString(KEY_FOR_PREVIOUS_URL,previousURL);
+        outState.putString(KEY_FOR_OPTION_SELECTED, optionSelected);
+        outState.putInt(KEY_FOR_LIMIT_SELECTED, limitSelected);
+        outState.putString(KEY_FOR_PREVIOUS_URL, previousURL);
         super.onSaveInstanceState(outState);
 
     }
@@ -63,10 +66,10 @@ public class MainActivity extends AppCompatActivity {
         // AppCompactActivity is a context itself, we can get the context and add our R.menu.feeds_menu to it.
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.feeds_menu, menu);
-        // we write this setChecked() only when we rotate our phone, the app gets relaunched(this means our inCreateMenuOption get re-aainvoked) and default of 10 is selected.
-        // now as we are saving limitSelected and downloading FeedEntry again, we should update our checked item as well
-        if(limitSelected==10)menu.findItem(R.id.top10).setChecked(true);
-        else if(limitSelected==25)menu.findItem(R.id.top25).setChecked(true);
+        // we write this setChecked() only when we rotate our phone, the app gets relaunched(this means our onCreateMenuOption get re-invoked) and default of 10 is selected.
+        // now as we are saving limitSelected , we should update our checked item as well
+        if (limitSelected == 10) menu.findItem(R.id.top10).setChecked(true);
+        else if (limitSelected == 25) menu.findItem(R.id.top25).setChecked(true);
         return true;    // successfully inflated our menu
     }
 
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 optionSelected = "topfreeapplications";
                 break;
             case R.id.menuPaid:
-                optionSelected ="toppaidapplications";
+                optionSelected = "toppaidapplications";
                 break;
             case R.id.menuSong:
                 optionSelected = "topsongs";
@@ -88,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.top10:
                 limitSelected = 10;
                 // setting the checked property if we selected this item
-                if(!item.isChecked())item.setChecked(true);
+                if (!item.isChecked()) item.setChecked(true);
                 break;
             case R.id.top25:
                 limitSelected = 25;
-                if(!item.isChecked())item.setChecked(true);
+                if (!item.isChecked()) item.setChecked(true);
                 break;
             case R.id.reload:
                 reloadSelected = true;
@@ -101,15 +104,16 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
 
-        String currURL = String.format(url,optionSelected,limitSelected);
+        String currURL = String.format(url, optionSelected, limitSelected);
         // we will download only if our previous processed url does not match with current given url or a reload menu is pressed.
         // if reload is pressed, last processed url is executed as reload menu is pressed, optionSelected and limitSelected hasn't changed hence currURL hasn't changed
-        if(reloadSelected || !currURL.equals(previousURL)){
-           startDownload(currURL);
+        if (reloadSelected || !currURL.equals(previousURL)) {
+            startDownload(currURL);
         }
         return true;
     }
-    private void startDownload(String currURL){
+
+    private void startDownload(String currURL) {
         DownloadDataTask task = new DownloadDataTask();
         task.execute(currURL);
         previousURL = currURL;
@@ -131,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d(TAG, "onPostExecute: result is: " + xmlData);
             ParseApps parseApps = new ParseApps();
-            parseApps.parse(xmlData);
+            if (!parseApps.parse(xmlData)) Log.e(TAG, "onPostExecute: parsing is unsuccessful");
 //            // arrayAdapter as a bridge btw UI and data source
 //            // it takes the context: MainActivity.this
 //            // the resource ID: R.layout.list_item, which is the View which will be used by the adapter to display contents
@@ -140,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
 //            // linking ihe arrayAdapter with the view which will use this adapter
 //            xmlListView.setAdapter(arrayAdapter);
 
-            // We will now be using our CustomAdapter to display name,artist and summary of apps.
-            CustomAdapterForListView<FeedEntry> customAdapter = new CustomAdapterForListView<> (MainActivity.this, R.layout.item_info, parseApps.getAppInfoList());
+            // We will now be using our CustomAdapter to display name,artist ,release date and summary of apps.
+            CustomAdapterForListView<FeedEntry> customAdapter = new CustomAdapterForListView<>(MainActivity.this, R.layout.item_info, parseApps.getAppInfoList());
             xmlListView.setAdapter(customAdapter);
         }
 

@@ -8,41 +8,44 @@ public class FeedEntry {
     private String appURL;
     private String releaseDate;
 
+    public String getName() {
+        return name;
+    }
 
     public void setName(String name) {
         this.name = name;
-    }
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-    public void setSummery(String summery) {
-        this.summery = summery;
-    }
-    public void setAppURL(String appURL) {
-        this.appURL = appURL;
-    }
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getArtist() {
         return artist;
     }
 
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
     public String getSummery() {
         return summery;
+    }
+
+    public void setSummery(String summery) {
+        this.summery = summery;
     }
 
     public String getAppURL() {
         return appURL;
     }
 
+    public void setAppURL(String appURL) {
+        this.appURL = appURL;
+    }
+
     public String getReleaseDate() {
         return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     @Override
@@ -50,6 +53,6 @@ public class FeedEntry {
         return "name = " + name + '\n' +
                 "artist = " + artist + '\n' +
                 "appURL = " + appURL + '\n' +
-                "releaseDate = " + releaseDate ;
+                "releaseDate = " + releaseDate;
     }
 }

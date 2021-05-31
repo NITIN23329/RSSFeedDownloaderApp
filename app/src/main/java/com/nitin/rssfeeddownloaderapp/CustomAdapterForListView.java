@@ -1,12 +1,12 @@
 package com.nitin.rssfeeddownloaderapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,32 +33,36 @@ public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<
         return appInfoList.size();
     }
 
+    @SuppressLint("LongLogTag")
     @NonNull
-    @Override   // this method is called by our ListView every time it requires to present a new View on screen
+    @Override
+    // this method is called by our ListView every time it requires to present a new View on screen
     // position : tells us the index of Entry the ListView needs
     // parent : it refers to item_info.xml so that we can access our custom adapter layout
+    //convertView is a view which is given to customAdapter which can be reused if it is not null
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        // the LayoutInflater takes the layout specified to it and convert it to a single View object
+        // the LayoutInflater takes the layout specified to it and convert it to a single View objects
         // inflate takes the xml_id(the id of item_info.xml) the id of custom adapter
         // then it takes parent(the item_info.xml) from which it will take  the layout of our custom adapter
-        //convertView is a view which is given to customAdapter which can be reused if it is not null
+
         ViewHolder viewHolder;
         View view;
-        if(convertView==null){
-            view  = layoutInflater.inflate(resourceID,parent,false);    // inflate a new  view of custom layout
+        if (convertView == null) {
+            view = layoutInflater.inflate(resourceID, parent, false);    // inflate a new  view of custom layout
             viewHolder = new ViewHolder(view);  // make a new ViewHolder tag for our newly created view
             view.setTag(viewHolder);    // set tag for our view
-        }else {
+        } else {
             view = convertView; //reuse view
             viewHolder = (ViewHolder) view.getTag();
         }
         // update our 3 widgets in our view
         viewHolder.updateView(appInfoList.get(position));
         // return the updated view
-        Log.d(TAG, "getView: custom adapter get called for view"+view.getTag());
+        Log.d(TAG, "getView: custom adapter get called for view" + view.getTag());
         return view;
     }
-    private class ViewHolder{
+
+    private class ViewHolder {
         final TextView tvName;
         final TextView tvArtist;
         final TextView tvSummary;
@@ -69,13 +73,14 @@ public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<
             this.tvName = view.findViewById(R.id.tvName);
             this.tvArtist = view.findViewById(R.id.tvArtist);
             this.tvSummary = view.findViewById(R.id.tvSummary);
-            this.tvReleaseDate  = view.findViewById(R.id.tvReleaseDate);
+            this.tvReleaseDate = view.findViewById(R.id.tvReleaseDate);
         }
-        public void updateView(FeedEntry currentFeed ){
+
+        public void updateView(FeedEntry currentFeed) {
             this.tvArtist.setText(currentFeed.getArtist());
             this.tvSummary.setText(currentFeed.getSummery());
             this.tvName.setText(currentFeed.getName());
-            this.tvReleaseDate.setText("Release date: "+currentFeed.getReleaseDate());
+            this.tvReleaseDate.setText("Release date: " + currentFeed.getReleaseDate());
         }
     }
 
