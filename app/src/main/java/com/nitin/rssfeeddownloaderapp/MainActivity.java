@@ -1,11 +1,15 @@
 package com.nitin.rssfeeddownloaderapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,9 +47,21 @@ public class MainActivity extends AppCompatActivity {
         xmlListView = findViewById(R.id.xmlListView);
         currSelected = findViewById(R.id.currentSelected);
         currSelected.setText(textOfCurrentSelected);
-        Log.d(TAG, "onCreate: Starting Async Task");
-
+        // using setOnItemClickListener, we get the reference of the View which got selected inside ListView
+        xmlListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e(TAG, "onItemClick: position of view got selected: " + position);
+                // we code the following code to run the given url in browser.
+                TextView tvURL = view.findViewById(R.id.tvURL);
+                String url = tvURL.getText().toString();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+            }
+        });
     }
+
 
     // added save functionality for optionSelected and limitSelected and previous processed url
     @Override

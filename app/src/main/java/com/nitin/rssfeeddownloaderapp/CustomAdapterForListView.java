@@ -2,7 +2,6 @@ package com.nitin.rssfeeddownloaderapp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,7 @@ public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<
         layoutInflater = LayoutInflater.from(context);
         this.appInfoList = appInfoList;
     }
+
 
     @Override   // total # of entries the adapter can work with
     public int getCount() {
@@ -55,18 +55,20 @@ public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<
             view = convertView; //reuse view
             viewHolder = (ViewHolder) view.getTag();
         }
+        FeedEntry currFeedEntry = appInfoList.get(position);
         // update our 3 widgets in our view
-        viewHolder.updateView(appInfoList.get(position));
+        viewHolder.updateView(currFeedEntry);
         // return the updated view
 //        Log.d(TAG, "getView: custom adapter get called for view" + view.getTag());
         return view;
     }
 
-    private class ViewHolder {
+    public static class ViewHolder {
         final TextView tvName;
         final TextView tvArtist;
         final TextView tvSummary;
         final TextView tvReleaseDate;
+        final TextView tvURL;
 
         public ViewHolder(View view) {
             // find the 3 widgets in our customAdapter
@@ -74,6 +76,7 @@ public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<
             this.tvArtist = view.findViewById(R.id.tvArtist);
             this.tvSummary = view.findViewById(R.id.tvSummary);
             this.tvReleaseDate = view.findViewById(R.id.tvReleaseDate);
+            this.tvURL = view.findViewById(R.id.tvURL);
         }
 
         public void updateView(FeedEntry currentFeed) {
@@ -81,6 +84,7 @@ public class CustomAdapterForListView<T extends FeedEntry> extends ArrayAdapter<
             this.tvSummary.setText(currentFeed.getSummery());
             this.tvName.setText(currentFeed.getName());
             this.tvReleaseDate.setText("Release date: " + currentFeed.getReleaseDate());
+            this.tvURL.setText(currentFeed.getAppURL());
         }
     }
 
