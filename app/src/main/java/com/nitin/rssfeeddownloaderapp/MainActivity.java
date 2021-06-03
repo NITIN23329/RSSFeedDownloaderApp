@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -142,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
         // if reload is pressed, last processed url is executed as reload menu is pressed, optionSelected and limitSelected hasn't changed hence currURL hasn't changed
         if (reloadSelected || !currURL.equals(previousURL)) {
             startDownload(currURL);
+            // toast is the fading message we get at the bottom of screen
+            if(reloadSelected) Toast.makeText(this,"Reloaded Successfully",Toast.LENGTH_SHORT).show();
         }
         return true;
     }
